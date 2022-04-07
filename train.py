@@ -14,14 +14,13 @@ import os
 from functions import SiameseInceptionResnetV1, siamese_dataset, pass_epoch, croppedYaleTrain, croppedYaleTest, splitDataSet, Siamese
 import pickle
 import time
+import gflags
+
 
 if __name__ == '__main__':
 
     # Parameters
-    data_dir = "data/CroppedYale"
-    model_dir = 'models/'  # Folder to save trained models
     resize_image = [105, 105]
-    use_gpu = torch.cuda.is_available()  # Use GPU
     lr_param = 0.0001
     batch_size = 128
     way_param = 20  # How much way one-shot learning
@@ -32,16 +31,35 @@ if __name__ == '__main__':
     save_every = 100
     test_every = 100
 
+    Flags = gflags.FLAGS
+    gflags.DEFINE_string("data_path", "data/CroppedYale", "training folder")
+    gflags.DEFINE_string("model_path", "models", "path to store model")
+    '''
+    gflags.DEFINE_integer("way", 20, "how much way one-shot learning")
+    gflags.DEFINE_string("times", 400, "number of samples to test accuracy")
+    gflags.DEFINE_integer("workers", 4, "number of dataLoader workers")
+    gflags.DEFINE_integer("batch_size", 128, "number of batch size")
+    gflags.DEFINE_float("lr", 0.00006, "learning rate")
+    gflags.DEFINE_integer("show_every", 10, "show result after each show_every iter.")
+    gflags.DEFINE_integer("save_every", 100, "save model after each save_every iter.")
+    gflags.DEFINE_integer("test_every", 100, "test model after each test_every iter.")
+    gflags.DEFINE_integer("max_iter", 50000, "number of iterations before stopping")
+    gflags.DEFINE_string("gpu_ids", "0,1,2,3", "gpu ids used to train")
+    '''
+    Flags(sys.argv)
+
+    # Creates model folder if not available
+    os.makedirs(Flags.model_path, exist_ok=True)
 
     # Determine if an nvidia GPU is available
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    print('Running on device: {}'.format(device))
+    use_gpu = torch.cuda.is_available()
+    print('Using GPU: {}'.format(use_gpu))
 
 
     # Define dataset, data augmentation, and dataloader
     # Dataset splitting
     percentage = 0.5  # Percentage of samples used for training
-    train_path, test_path = splitDataSet(data_dir, percentage)
+    train_path, test_path = splitDataSet(Flags.data_path, percentage)
     # Transformations
     train_transforms = transforms.Compose([
         transforms.Grayscale(),
@@ -107,7 +125,7 @@ if __name__ == '__main__':
             time_start = time.time()
 
         if batch_id % save_every == 0:
-            torch.save(net.state_dict(), model_dir + '/model-inter-' + str(batch_id + 1) + ".pt")
+            torch.save(net.state_dict(), Flags.model_path + '/model-inter-' + str(batch_id + 1) + ".pt")
 
         if batch_id % test_every == 0:  # Shouldn´t be set the net in eval mode?
             net.eval()
