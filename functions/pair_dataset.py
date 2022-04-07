@@ -10,32 +10,31 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
-from facenet_pytorch import fixed_image_standardization
+from functions.utils import fixed_image_standardization
 
 class siamese_dataset(torch.utils.data.IterableDataset):
-    def __init__(self, path, shuffle_pairs=True, augment=False):
+    def __init__(self, path, shuffle_pairs=True, resize_image=[256, 256], augment=False):
         '''
         Create an iterable dataset from a directory containing sub-directories of 
         entities with their images contained inside each sub-directory.
             Parameters:
                     path (str):                 Path to directory containing the dataset.
                     shuffle_pairs (boolean):    Pass True when training, False otherwise. When set to false, the image pair generation will be deterministic
+                    resize_image: (2-tupla):    [width_resolution, height_resolution]
                     augment (boolean):          When True, images will be augmented using a standard set of transformations.
-            where b = batch size
             Returns:
-                    output (torch.Tensor): shape=[b, 1], Similarity of each pair of images
+                    output (torch.Tensor): shape=[batch_size, 1], Similarity of each pair of images. # TODO: something wrong in the output definition
         '''
         self.path = path
-
-        self.feed_shape = [3, 256, 256]
+        self.feed_shape = resize_image
         self.shuffle_pairs = shuffle_pairs
-
         self.augment = augment
 
         if self.augment:
             # If images are to be augmented, add extra operations for it (first two).
+            #  TODO: evaluate which combination of transformations is the best
             self.transform = transforms.Compose([
-                transforms.Resize(self.feed_shape[1:]),
+                transforms.Resize(self.feed_shape),
                 transforms.RandomHorizontalFlip(p=0.5),
                 np.float32,
                 transforms.ToTensor(),
@@ -44,7 +43,7 @@ class siamese_dataset(torch.utils.data.IterableDataset):
         else:
             # If no augmentation is needed then apply only the normalization and resizing operations.
             self.transform = transforms.Compose([
-                transforms.Resize(self.feed_shape[1:]),
+                transforms.Resize(self.feed_shape),
                 np.float32,
                 transforms.ToTensor(),
                 fixed_image_standardization   
@@ -62,7 +61,6 @@ class siamese_dataset(torch.utils.data.IterableDataset):
         self.image_classes = []
         self.class_indices = {}
         
-        # repes = len(self.image_paths)-1
         repes = 1
 
         # Ali

@@ -341,6 +341,41 @@ class SiameseInceptionResnetV1(nn.Module):
         # output = self.cls_head(combined_features)
         return output
 
+
+class Siamese(nn.Module):
+
+    def __init__(self):
+        super(Siamese, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, 64, 10),  # 64@96*96
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2),  # 64@48*48
+            nn.Conv2d(64, 128, 7),
+            nn.ReLU(),    # 128@42*42
+            nn.MaxPool2d(2),   # 128@21*21
+            nn.Conv2d(128, 128, 4),
+            nn.ReLU(), # 128@18*18
+            nn.MaxPool2d(2), # 128@9*9
+            nn.Conv2d(128, 256, 4),
+            nn.ReLU(),   # 256@6*6
+        )
+        self.liner = nn.Sequential(nn.Linear(9216, 4096), nn.Sigmoid())
+        self.out = nn.Linear(4096, 1)
+
+    def forward_one(self, x):
+        x = self.conv(x)
+        x = x.view(x.size()[0], -1)  # Reshape tensor: https://pytorch.org/docs/stable/generated/torch.Tensor.view.html
+        x = self.liner(x)
+        return x
+
+    def forward(self, x1, x2):
+        out1 = self.forward_one(x1)
+        out2 = self.forward_one(x2)
+        dis = torch.abs(out1 - out2)
+        out = self.out(dis)
+        #  return self.sigmoid(out)
+        return out
+
 def load_weights(mdl, name):
     """Download pretrained state_dict and load into model.
 
@@ -362,8 +397,8 @@ def load_weights(mdl, name):
     os.makedirs(model_dir, exist_ok=True)
 
     cached_file = os.path.join(model_dir, os.path.basename(path))
-    # if not os.path.exists(cached_file):
-    #     download_url_to_file(path, cached_file)
+    if not os.path.exists(cached_file):
+        download_url_to_file(path, cached_file)
 
     state_dict = torch.load(cached_file)
     mdl.load_state_dict(state_dict)
@@ -376,5 +411,4 @@ def get_torch_home():
         )
     )
     return torch_home
-
 

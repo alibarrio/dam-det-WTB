@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 import time
-import os
 
 
 class Logger(object):
@@ -93,16 +92,10 @@ def pass_epoch(
     loss = 0
     metrics = {}
 
-    for i_batch, ((x1, x2), y, (class1, class2)) in enumerate(loader):
-        x1 = x1.to(device)
-        x2 = x2.to(device)
+    for i_batch, (x, y) in enumerate(loader):
+        x = x.to(device)
         y = y.to(device)
-        
-        y_pred = model(x1, x2)
-
-        # y = torch.transpose(y, 0, 1)
-        # y_pred = torch.transpose(y_pred, 0, 1)
-        
+        y_pred = model(x)
         loss_batch = loss_fn(y_pred, y)
 
         if model.training:
@@ -129,18 +122,17 @@ def pass_epoch(
         else:
             logger(loss_batch, metrics_batch, i_batch)
     
-        if model.training and scheduler is not None:
-            scheduler.step()
+    if model.training and scheduler is not None:
+        scheduler.step()
 
-        # Estas líneas dan error
-        loss = loss / (i_batch + 1)
-        metrics = {k: v / (i_batch + 1) for k, v in metrics.items()}
+    loss = loss / (i_batch + 1)
+    metrics = {k: v / (i_batch + 1) for k, v in metrics.items()}
+            
+    if writer is not None and not model.training:
+        writer.add_scalars('loss', {mode: loss.detach()}, writer.iteration)
+        for metric_name, metric in metrics.items():
+            writer.add_scalars(metric_name, {mode: metric})
 
-        if writer is not None and not model.training:
-            writer.add_scalars('loss', {mode: loss.detach()}, writer.iteration)
-            for metric_name, metric in metrics.items():
-                writer.add_scalars(metric_name, {mode: metric})
-     
     return loss, metrics
 
 
