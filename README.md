@@ -4,7 +4,8 @@
 Código principal para entrenar la red
 
 ### /functions
+- *train.py*: training script
 - *siamese_resnet.py*: definición red siamesa
-- *pair_dataset.py*: creación dataset de pares (clase dataset modificada)
-- *net_train.py*: generación de batches
+- *~~pair_dataset.py~*: creación dataset de pares (clase dataset modificada)
+- *~~net_train.py~~*: generación de batches
 
