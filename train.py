@@ -21,21 +21,13 @@ import gflags
 if __name__ == '__main__':
 
     # Parameters
-    resize_image = [105, 105]
-    lr_param = 0.0001
-    batch_size = 128
-    way_param = 20  # How much way one-shot learning
-    times_param = 400  # Number of samples to test accuracy
-    workers = 4  # Number of dataLoader workers
-    max_iter_param = 50000
-    show_every = 10
-    save_every = 100
-    test_every = 100
-
     Flags = gflags.FLAGS
     gflags.DEFINE_string("data_path", "data/CroppedYale", "training folder")
     gflags.DEFINE_string("model_path", "models", "path to store model")
-    '''
+    gflags.DEFINE_bool("load_model", False, "Whether load a pretrained model or not")
+    gflags.DEFINE_string("load_model_path", "models/model.pt", "pathname to load model")
+    gflags.DEFINE_integer("imHeight", 105, "Image height")
+    gflags.DEFINE_integer("imWidth", 105, "Image wifth")
     gflags.DEFINE_integer("way", 20, "how much way one-shot learning")
     gflags.DEFINE_string("times", 400, "number of samples to test accuracy")
     gflags.DEFINE_integer("workers", 4, "number of dataLoader workers")
@@ -45,12 +37,20 @@ if __name__ == '__main__':
     gflags.DEFINE_integer("save_every", 100, "save model after each save_every iter.")
     gflags.DEFINE_integer("test_every", 100, "test model after each test_every iter.")
     gflags.DEFINE_integer("max_iter", 50000, "number of iterations before stopping")
+    gflags.DEFINE_bool("colab", False, "If Colab is used, use a reduced number of max_iter")
+    gflags.DEFINE_integer("max_iter_colab", 5000, "number of iterations before stopping if using Colab")
     gflags.DEFINE_string("gpu_ids", "0,1,2,3", "gpu ids used to train")
-    '''
+
     Flags(sys.argv)
 
-    # Creates model folder if not available
-    os.makedirs(Flags.model_path, exist_ok=True)
+    # Process arguments
+    os.makedirs(Flags.model_path, exist_ok=True)      # Creates model folder if not available
+    resize_image = [Flags.imHeight, Flags.imWidth]
+    if Flags.colab:
+        max_iter = Flags.max_iter_colab
+    else:
+        max_iter = Flags.max_iter
+
 
     # Determine if an nvidia GPU is available
     use_gpu = torch.cuda.is_available()
@@ -75,15 +75,17 @@ if __name__ == '__main__':
     ])
     # Dataset
     train_dataset = croppedYaleTrain(train_path, transform=train_transforms)
-    val_dataset = croppedYaleTest(test_path, transform=test_transforms, times=times_param, way=way_param)
+    val_dataset = croppedYaleTest(test_path, transform=test_transforms, times=Flags.times, way=Flags.way)
     # Dataloader
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=workers)
-    val_loader = DataLoader(val_dataset, batch_size=way_param, shuffle=False, num_workers=workers)
+    train_loader = DataLoader(train_dataset, batch_size=Flags.batch_size, shuffle=False, num_workers=Flags.workers)
+    val_loader = DataLoader(val_dataset, batch_size=Flags.way, shuffle=False, num_workers=Flags.workers)
 
 
     # Model definition
     loss_fn = torch.nn.BCEWithLogitsLoss(size_average=True)  # https://pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html
     net = Siamese()
+    if Flags.load_model:
+        net.load_state_dict(torch.load(Flags.load_model_path))
     if use_gpu:
         net.cuda()
 
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     # Training
     # Training setup
     net.train()  # https://stackoverflow.com/questions/51433378/what-does-model-train-do-in-pytorch
-    optimizer = torch.optim.Adam(net.parameters(), lr=lr_param)
+    optimizer = torch.optim.Adam(net.parameters(), lr=Flags.lr_param)
     optimizer.zero_grad()  # Gradient initialization
     train_loss = []
     loss_val = 0
@@ -100,7 +102,7 @@ if __name__ == '__main__':
 
     # Training loop
     for batch_id, (img1, img2, label) in enumerate(train_loader, start=1):
-        if batch_id > max_iter_param:
+        if batch_id > max_iter:
             break
         if use_gpu:
             img1, img2, label = Variable(img1.cuda()), Variable(img2.cuda()), Variable(label.cuda())
@@ -119,16 +121,16 @@ if __name__ == '__main__':
         loss.backward()
         optimizer.step()
 
-        if batch_id % show_every == 0:
+        if batch_id % Flags.show_every == 0:
             print('[%d]\tloss:\t%.5f\ttime lapsed:\t%.2f s' % (
-            batch_id, loss_val / show_every, time.time() - time_start))
+            batch_id, loss_val / Flags.show_every, time.time() - time_start))
             loss_val = 0
             time_start = time.time()
 
-        if batch_id % save_every == 0:
+        if batch_id % Flags.save_every == 0:
             torch.save(net.state_dict(), Flags.model_path + '/model-inter-' + str(batch_id + 1) + ".pt")
 
-        if batch_id % test_every == 0:  # Shouldn´t be set the net in eval mode?
+        if batch_id % Flags.test_every == 0:  # Shouldn´t be set the net in eval mode?
             net.eval()
             right, error = 0, 0
             for _, (test1, test2) in enumerate(val_loader, 1):
