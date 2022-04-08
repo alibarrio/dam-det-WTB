@@ -21,7 +21,7 @@ def splitDataSet(dataPath, percentage):
 
     # Create a list of list with all the images and classes
     idx = 0
-    for personPath in os.listdir(os.path.abspath(dataPath)):
+    for personPath in os.listdir(dataPath):
         all_paths.append([])
         for samplePath in os.listdir(os.path.abspath(os.path.join(dataPath, personPath))):
             all_paths[idx].append(os.path.abspath(os.path.join(dataPath, personPath, samplePath)))
