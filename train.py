@@ -93,7 +93,7 @@ if __name__ == '__main__':
     # Training
     # Training setup
     net.train()  # https://stackoverflow.com/questions/51433378/what-does-model-train-do-in-pytorch
-    optimizer = torch.optim.Adam(net.parameters(), lr=Flags.lr_param)
+    optimizer = torch.optim.Adam(net.parameters(), lr=Flags.lr)
     optimizer.zero_grad()  # Gradient initialization
     train_loss = []
     loss_val = 0
