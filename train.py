@@ -60,6 +60,7 @@ if __name__ == '__main__':
     # Define dataset, data augmentation, and dataloader
     # Dataset splitting
     percentage = 0.5  # Percentage of samples used for training
+    print('Funcionan los cambios')
     train_path, test_path = splitDataSet(Flags.data_path, percentage)
     # Transformations
     train_transforms = transforms.Compose([
