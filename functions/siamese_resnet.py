@@ -499,7 +499,7 @@ def load_weights(mdl, name):
     # cached_file = os.path.join(model_dir, os.path.basename(path))
     # if not os.path.exists(cached_file):
        # download_url_to_file(path, cached_file)
-    cached_dile = '/content/gdrive/MyDrive/tfm/models/20180402-114759-vggface2.pt'
+    cached_file = '/content/gdrive/MyDrive/tfm/models/20180402-114759-vggface2.pt'
     state_dict = torch.load(cached_file)
     mdl.load_state_dict(state_dict)
 
