@@ -344,26 +344,126 @@ class SiameseInceptionResnetV1(nn.Module):
 
 class Siamese(nn.Module):
 
-    def __init__(self):
+    def __init__(self, pretrained=None, classify=False, num_classes=None, num_out_comp=None, dropout_prob=0.6):
         super(Siamese, self).__init__()
-        self.conv = nn.Sequential(
-            nn.Conv2d(1, 64, 10),  # 64@96*96
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),  # 64@48*48
-            nn.Conv2d(64, 128, 7),
-            nn.ReLU(),    # 128@42*42
-            nn.MaxPool2d(2),   # 128@21*21
-            nn.Conv2d(128, 128, 4),
-            nn.ReLU(), # 128@18*18
-            nn.MaxPool2d(2), # 128@9*9
-            nn.Conv2d(128, 256, 4),
-            nn.ReLU(),   # 256@6*6
+        
+        # Set simple attributes
+        self.pretrained = pretrained
+        self.classify = classify
+        self.num_classes = num_classes
+        self.num_out_comp = num_out_comp
+
+        if pretrained == 'vggface2':
+            tmp_classes = 8631
+        elif pretrained == 'casia-webface':
+            tmp_classes = 10575
+        elif pretrained is None and self.classify and self.num_classes is None:
+            raise Exception('If "pretrained" is not specified and "classify" is True, "num_classes" must be specified')
+
+
+        # Define layers
+        self.conv2d_1a = BasicConv2d(3, 32, kernel_size=3, stride=2)
+        self.conv2d_2a = BasicConv2d(32, 32, kernel_size=3, stride=1)
+        self.conv2d_2b = BasicConv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        self.maxpool_3a = nn.MaxPool2d(3, stride=2)
+        self.conv2d_3b = BasicConv2d(64, 80, kernel_size=1, stride=1)
+        self.conv2d_4a = BasicConv2d(80, 192, kernel_size=3, stride=1)
+        self.conv2d_4b = BasicConv2d(192, 256, kernel_size=3, stride=2)
+        self.repeat_1 = nn.Sequential(
+            Block35(scale=0.17),
+            Block35(scale=0.17),
+            Block35(scale=0.17),
+            Block35(scale=0.17),
+            Block35(scale=0.17),
         )
-        self.liner = nn.Sequential(nn.Linear(9216, 4096), nn.Sigmoid())
+        self.mixed_6a = Mixed_6a()
+        self.repeat_2 = nn.Sequential(
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+            Block17(scale=0.10),
+        )
+        self.mixed_7a = Mixed_7a()
+        self.repeat_3 = nn.Sequential(
+            Block8(scale=0.20),
+            Block8(scale=0.20),
+            Block8(scale=0.20),
+            Block8(scale=0.20),
+            Block8(scale=0.20),
+        )
+        self.block8 = Block8(noReLU=True)
+        self.avgpool_1a = nn.AdaptiveAvgPool2d(1)
+        self.dropout = nn.Dropout(dropout_prob)
+        self.last_linear = nn.Linear(1792, 512, bias=False)
+        self.last_bn = nn.BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True)
+
+        if pretrained is not None:
+            self.logits = nn.Linear(512, tmp_classes)
+            load_weights(self, pretrained)
+            out_features = tmp_classes
+            # Mientras se soluciona el bug de la salida
+            # out_features = 512
+
+        # Si no le doy pesos preentrenados y quiero sacar los embeddings le especifico cuántos componentes de salida van a tener
+        if pretrained is None and self.num_out_comp is not None:
+            self.logits = nn.Linear(512,  self.num_out_comp)
+            load_weights(self, pretrained)
+
+        if self.classify and self.num_classes is not None:
+            self.logits = nn.Linear(512, self.num_classes)
+
+        # self.device = torch.device('cpu')
+        # if device is not None:
+        #     self.device = device
+        #     self.to(device)
+
+        # Clasificación (misma clase o distinta clase)
+        self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.Sigmoid())
         self.out = nn.Linear(4096, 1)
 
+    def backbone(self, x):
+        """Calculate embeddings or logits given a batch of input image tensors.
+
+        Arguments:
+            x {torch.tensor} -- Batch of image tensors representing faces.
+
+        Returns:
+            torch.tensor -- Batch of embedding vectors or multinomial logits.
+        """
+        x = self.conv2d_1a(x)
+        x = self.conv2d_2a(x)
+        x = self.conv2d_2b(x)
+        x = self.maxpool_3a(x)
+        x = self.conv2d_3b(x)
+        x = self.conv2d_4a(x)
+        x = self.conv2d_4b(x)
+        x = self.repeat_1(x)
+        x = self.mixed_6a(x)
+        x = self.repeat_2(x)
+        x = self.mixed_7a(x)
+        x = self.repeat_3(x)
+        x = self.block8(x)
+        x = self.avgpool_1a(x)
+        x = self.dropout(x)
+        x = self.last_linear(x.view(x.shape[0], -1))
+        x = self.last_bn(x)
+        if self.classify:
+            x = self.logits(x)
+        elif self.num_out_comp is not None:
+            x = self.logits(x)
+        else:
+            x = self.logits(x)
+            # x = F.normalize(x, p=2, dim=1)
+        return x
+
     def forward_one(self, x):
-        x = self.conv(x)
+        x = self.backbone(x)
         x = x.view(x.size()[0], -1)  # Reshape tensor: https://pytorch.org/docs/stable/generated/torch.Tensor.view.html
         x = self.liner(x)
         return x
