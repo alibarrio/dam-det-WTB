@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # Parameters
     Flags = gflags.FLAGS
-    gflags.DEFINE_string("data_path", "dataset", "training folder")
+    gflags.DEFINE_string("data_path", "tfm/dataset", "training folder")
     gflags.DEFINE_string("model_path", "models", "path to store model")
     gflags.DEFINE_bool("load_model", False, "Whether load a pretrained model or not")
     gflags.DEFINE_string("load_model_path", "models/model.pt", "pathname to load model")
@@ -60,7 +60,6 @@ if __name__ == '__main__':
     # Define dataset, data augmentation, and dataloader
     # Dataset splitting
     percentage = 0.5  # Percentage of samples used for training
-    print('Funcionan los cambios')
     train_path, test_path = splitDataSet(Flags.data_path, percentage)
     # Transformations
     train_transforms = transforms.Compose([
