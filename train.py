@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # Parameters
     Flags = gflags.FLAGS
-    gflags.DEFINE_string("data_path", "data/CroppedYale", "training folder")
+    gflags.DEFINE_string("data_path", "dataset", "training folder")
     gflags.DEFINE_string("model_path", "models", "path to store model")
     gflags.DEFINE_bool("load_model", False, "Whether load a pretrained model or not")
     gflags.DEFINE_string("load_model_path", "models/model.pt", "pathname to load model")
