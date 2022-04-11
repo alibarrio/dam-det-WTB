@@ -59,6 +59,7 @@ if __name__ == '__main__':
 
     # Define dataset, data augmentation, and dataloader
     # Dataset splitting
+    print(Flags.data_path)
     percentage = 0.5  # Percentage of samples used for training
     train_path, test_path = splitDataSet(Flags.data_path, percentage)
     # Transformations
