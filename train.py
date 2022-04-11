@@ -83,7 +83,11 @@ if __name__ == '__main__':
 
     # Model definition
     loss_fn = torch.nn.BCEWithLogitsLoss(size_average=True)  # https://pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html
-    net = Siamese()
+    
+    net = Siamese(
+    classify=False,
+    pretrained='vggface2',
+    )
     if Flags.load_model:
         net.load_state_dict(torch.load(Flags.load_model_path))
     if use_gpu:
