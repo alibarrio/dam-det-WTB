@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # Parameters
     Flags = gflags.FLAGS
-    gflags.DEFINE_string("data_path", "tfm/dataset", "training folder")
+    gflags.DEFINE_string("data_path", "/content/gdrive/MyDrive/tfm/dataset/all", "training folder")
     gflags.DEFINE_string("model_path", "models", "path to store model")
     gflags.DEFINE_bool("load_model", False, "Whether load a pretrained model or not")
     gflags.DEFINE_string("load_model_path", "models/model.pt", "pathname to load model")
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     # Determine if an nvidia GPU is available
     use_gpu = torch.cuda.is_available()
-    print('Using GPU: {}'.format(use_gpu))
+    print('using GPU: {}'.format(use_gpu))
 
 
     # Define dataset, data augmentation, and dataloader
