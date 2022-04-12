@@ -31,7 +31,7 @@ if __name__ == '__main__':
     gflags.DEFINE_integer("way", 20, "how much way one-shot learning")
     gflags.DEFINE_string("times", 400, "number of samples to test accuracy")
     gflags.DEFINE_integer("workers", 4, "number of dataLoader workers")
-    gflags.DEFINE_integer("batch_size", 128, "number of batch size")
+    gflags.DEFINE_integer("batch_size", 32, "number of batch size")
     gflags.DEFINE_float("lr", 0.00006, "learning rate")
     gflags.DEFINE_integer("show_every", 10, "show result after each show_every iter.")
     gflags.DEFINE_integer("save_every", 100, "save model after each save_every iter.")
