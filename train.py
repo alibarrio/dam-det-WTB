@@ -65,13 +65,13 @@ if __name__ == '__main__':
     train_transforms = transforms.Compose([
         transforms.Resize(resize_image),
         np.float32,
-        transforms.ToTensor()
+        transforms.ToTensor(),
         fixed_image_standardization
     ])
     test_transforms = transforms.Compose([
         transforms.Resize(resize_image),
         np.float32,
-        transforms.ToTensor()
+        transforms.ToTensor(),
         fixed_image_standardization
     ])
     # Dataset
