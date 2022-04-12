@@ -59,19 +59,20 @@ if __name__ == '__main__':
 
     # Define dataset, data augmentation, and dataloader
     # Dataset splitting
-    percentage = 0.5  # Percentage of samples used for training
+    percentage = 0.8  # Percentage of samples used for training
     train_path, test_path = splitDataSet(Flags.data_path, percentage)
     # Transformations
     train_transforms = transforms.Compose([
-        transforms.Grayscale(),
         transforms.Resize(resize_image),
-        transforms.RandomAffine(15),
+        np.float32,
         transforms.ToTensor()
+        fixed_image_standardization
     ])
     test_transforms = transforms.Compose([
-        transforms.Grayscale(),
         transforms.Resize(resize_image),
+        np.float32,
         transforms.ToTensor()
+        fixed_image_standardization
     ])
     # Dataset
     train_dataset = croppedYaleTrain(train_path, transform=train_transforms)
