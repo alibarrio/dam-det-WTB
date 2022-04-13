@@ -21,10 +21,10 @@ def splitDataSet(dataPath, percentage):
 
     # Create a list of list with all the images and classes
     idx = 0
-    for personPath in os.listdir(dataPath):
+    for imPath in os.listdir(dataPath):
         all_paths.append([])
-        for samplePath in os.listdir(os.path.abspath(os.path.join(dataPath, personPath))):
-            all_paths[idx].append(os.path.abspath(os.path.join(dataPath, personPath, samplePath)))
+        for samplePath in os.listdir(os.path.abspath(os.path.join(dataPath, imPath))):
+            all_paths[idx].append(os.path.abspath(os.path.join(dataPath, imPath, samplePath)))
         idx += 1
 
     num_classes = idx
@@ -34,6 +34,9 @@ def splitDataSet(dataPath, percentage):
         ip = np.random.permutation(num_samples).tolist()
         train_path.append(list(all_paths[i][j] for j in ip[:num_train_samples]))
         test_path.append(list(all_paths[i][j] for j in ip[num_train_samples:]))
+    
+    print('train images: ', len(train_path))
+    print('test images: ', len(test_path))
 
     return train_path, test_path
 
