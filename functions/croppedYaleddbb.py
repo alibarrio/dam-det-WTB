@@ -34,9 +34,6 @@ def splitDataSet(dataPath, percentage):
         ip = np.random.permutation(num_samples).tolist()
         train_path.append(list(all_paths[i][j] for j in ip[:num_train_samples]))
         test_path.append(list(all_paths[i][j] for j in ip[num_train_samples:]))
-    
-    print('train images: ', len(train_path))
-    print('test images: ', len(test_path))
 
     return train_path, test_path
 
