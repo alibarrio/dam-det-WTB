@@ -41,7 +41,7 @@ def splitDataSet(dataPath, percentage):
 class createTrain(Dataset):
 
     def __init__(self, dataPath, transform=None):
-        super(croppedYaleTrain, self).__init__()
+        super(createTrain, self).__init__()
         np.random.seed(0)
         self.transform = transform
         self.dataPath = dataPath
@@ -84,7 +84,7 @@ class createTest(Dataset):
 
     def __init__(self, dataPath, transform=None, times=200, way=20):
         np.random.seed(1)
-        super(croppedYaleTest, self).__init__()
+        super(createTest, self).__init__()
         self.transform = transform
         self.times = times
         self.way = way
