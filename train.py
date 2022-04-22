@@ -67,6 +67,28 @@ if __name__ == '__main__':
         transforms.ToTensor(),
         fixed_image_standardization
     ])
+    horz_transforms = transforms.Compose([
+        transforms.Resize(resize_image),
+        transforms.RandomHorizontalFlip(p=1),
+        np.float32,
+        transforms.ToTensor(),
+        fixed_image_standardization
+    ])
+    vert_transforms = transforms.Compose([
+        transforms.Resize(resize_image),
+        transforms.RandomVerticalFlip(p=1),
+        np.float32,
+        transforms.ToTensor(),
+        fixed_image_standardization
+    horz_vert_transforms = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.RandomHorizontalFlip(p=1),
+        transforms.RandomVerticalFlip(p=1),
+        np.float32,
+        transforms.ToTensor(),
+        fixed_image_standardization
+     ])
+    
     test_transforms = transforms.Compose([
         transforms.Resize(resize_image),
         np.float32,
@@ -75,6 +97,10 @@ if __name__ == '__main__':
     ])
     # Dataset
     train_dataset = createTrain(train_path, transform=train_transforms)
+    horz_dataset = createTrain(train_path, transform=horz_transforms)
+    vert_dataset = createTrain(train_path, transform=vert_transforms)
+    horz_vert_dataset = createTrain(train_path, transform=horz_vert_transforms)
+    increased_train_dataset = torch.utils.data.ConcatDataset([train_dataset,horz_dataset,vert_dataset,horz_vert_dataset])
     val_dataset = createTest(test_path, transform=test_transforms, times=Flags.times, way=Flags.way)
     # Dataloader
     train_loader = DataLoader(train_dataset, batch_size=Flags.batch_size, shuffle=False, num_workers=Flags.workers)
