@@ -38,7 +38,7 @@ def splitDataSet(dataPath, percentage):
     return train_path, test_path
 
 
-class croppedYaleTrain(Dataset):
+class createTrain(Dataset):
 
     def __init__(self, dataPath, transform=None):
         super(croppedYaleTrain, self).__init__()
@@ -80,7 +80,7 @@ class croppedYaleTrain(Dataset):
         return image1, image2, torch.from_numpy(np.array([label], dtype=np.float32))
 
 
-class croppedYaleTest(Dataset):
+class createTest(Dataset):
 
     def __init__(self, dataPath, transform=None, times=200, way=20):
         np.random.seed(1)
