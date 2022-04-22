@@ -1,7 +1,6 @@
 # Damage detection and recognition training pipeline
 
 from functions.utils import fixed_image_standardization
-from functions import training
 import torch
 from torch.utils.data import Dataset, DataLoader, SubsetRandomSampler
 from torch import optim
@@ -11,7 +10,7 @@ from torch.autograd import Variable
 from torchvision import datasets, transforms
 import numpy as np
 import os
-from functions import SiameseInceptionResnetV1, siamese_dataset, pass_epoch, croppedYaleTrain, croppedYaleTest, splitDataSet, Siamese
+from functions import SiameseInceptionResnetV1, createTrain, createTest, splitDataSet, Siamese
 import pickle
 import time
 import sys
