@@ -75,8 +75,8 @@ if __name__ == '__main__':
         fixed_image_standardization
     ])
     # Dataset
-    train_dataset = croppedYaleTrain(train_path, transform=train_transforms)
-    val_dataset = croppedYaleTest(test_path, transform=test_transforms, times=Flags.times, way=Flags.way)
+    train_dataset = createTrain(train_path, transform=train_transforms)
+    val_dataset = createTest(test_path, transform=test_transforms, times=Flags.times, way=Flags.way)
     # Dataloader
     train_loader = DataLoader(train_dataset, batch_size=Flags.batch_size, shuffle=False, num_workers=Flags.workers)
     val_loader = DataLoader(val_dataset, batch_size=Flags.way, shuffle=False, num_workers=Flags.workers)
