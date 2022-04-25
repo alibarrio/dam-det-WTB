@@ -82,6 +82,7 @@ if __name__ == '__main__':
         np.float32,
         transforms.ToTensor(),
         fixed_image_standardization
+    ]) 
     horz_vert_transforms = transforms.Compose([
         transforms.Resize((256, 256)),
         transforms.RandomHorizontalFlip(p=1),
