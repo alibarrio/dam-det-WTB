@@ -8,6 +8,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.tensorboard import SummaryWriter
 from torch.autograd import Variable
 from torchvision import datasets, transforms
+from PIL import Image
 import numpy as np
 import os
 from functions import SiameseInceptionResnetV1, createTrain, createTest, splitDataSet, Siamese
@@ -164,7 +165,7 @@ if __name__ == '__main__':
         if batch_id % Flags.test_every == 0:  # Shouldn´t be set the net in eval mode?
             net.eval()
             right, error = 0, 0
-            for _, (test1, test2) in enumerate(val_loader, 1):
+            for val_id, (test1, test2) in enumerate(val_loader, 1):
                 if use_gpu:
                     test1, test2 = test1.cuda(), test2.cuda()
                 test1, test2 = Variable(test1), Variable(test2)
@@ -177,6 +178,7 @@ if __name__ == '__main__':
                 else:
                     error += 1
                     # if Flags.save_errors:
+                    # test1.save('dataset/errors/' + str(batch_id) + '_' + str(val_id))
                          
 
             acc = right * 1.0 / (right + error)
