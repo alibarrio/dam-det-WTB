@@ -39,6 +39,7 @@ if __name__ == '__main__':
     gflags.DEFINE_bool("colab", False, "If Colab is used, use a reduced number of max_iter")
     gflags.DEFINE_integer("max_iter_colab", 5000, "number of iterations before stopping if using Colab")
     gflags.DEFINE_string("gpu_ids", "0,1,2,3", "gpu ids used to train")
+    gflags.DEFINE_bool("save_errors", True, "Whether save val errors or not")
 
     Flags(sys.argv)
 
@@ -175,6 +176,8 @@ if __name__ == '__main__':
                     right += 1
                 else:
                     error += 1
+                    # if Flags.save_errors:
+                         
 
             acc = right * 1.0 / (right + error)
             print('*' * 70)
