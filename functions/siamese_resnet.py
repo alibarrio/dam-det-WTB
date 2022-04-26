@@ -425,7 +425,7 @@ class Siamese(nn.Module):
 
         # Clasificación (misma clase o distinta clase)
         self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.Sigmoid())
-        self.out = nn.Sequential(nn.Linear(4096, 1), nn.Sigmoid())
+        self.out = nn.Linear(4096, 1)
 
     def backbone(self, x):
         """Calculate embeddings or logits given a batch of input image tensors.
@@ -473,8 +473,8 @@ class Siamese(nn.Module):
         out2 = self.forward_one(x2)
         dis = torch.abs(out1 - out2)
         out = self.out(dis)
-        #  return self.sigmoid(out)
-        return out
+        return self.sigmoid(out)
+        #  return out
 
 def load_weights(mdl, name):
     """Download pretrained state_dict and load into model.
