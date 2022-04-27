@@ -175,7 +175,7 @@ class Mixed_7a(nn.Module):
         out = torch.cat((x0, x1, x2, x3), 1)
         return out
 
-
+### ANTIGUA
 class SiameseInceptionResnetV1(nn.Module):
     """Inception Resnet V1 model with optional loading of pretrained weights.
 
@@ -259,8 +259,6 @@ class SiameseInceptionResnetV1(nn.Module):
             self.logits = nn.Linear(512, tmp_classes)
             load_weights(self, pretrained)
             out_features = tmp_classes
-            # Mientras se soluciona el bug de la salida
-            # out_features = 512
 
         # Si no le doy pesos preentrenados y quiero sacar los embeddings le especifico cuántos componentes de salida van a tener
         if pretrained is None and self.num_out_comp is not None:
@@ -407,8 +405,6 @@ class Siamese(nn.Module):
             self.logits = nn.Linear(512, tmp_classes)
             load_weights(self, pretrained)
             out_features = tmp_classes
-            # Mientras se soluciona el bug de la salida
-            # out_features = 512
 
         # Si no le doy pesos preentrenados y quiero sacar los embeddings le especifico cuántos componentes de salida van a tener
         if pretrained is None and self.num_out_comp is not None:
@@ -473,8 +469,7 @@ class Siamese(nn.Module):
         out2 = self.forward_one(x2)
         dis = torch.abs(out1 - out2)
         out = self.out(dis)
-        return self.sigmoid(out)
-        #  return out
+        return out
 
 def load_weights(mdl, name):
     """Download pretrained state_dict and load into model.
