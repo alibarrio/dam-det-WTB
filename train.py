@@ -134,6 +134,7 @@ if __name__ == '__main__':
 
 
     # Model definition
+    # UserWarning: size_average and reduce args will be deprecated, please use reduction='mean' instead.
     loss_fn = torch.nn.BCEWithLogitsLoss(size_average=True)  # https://pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html
     
     net = Siamese(
