@@ -11,7 +11,7 @@ from torchvision import datasets, transforms
 from PIL import Image
 import numpy as np
 import os
-from functions import SiameseInceptionResnetV1, createTrain, createTest, splitDataSet, Siamese
+from functions import createTrain, createTest, splitDataSet, Siamese
 import pickle
 import time
 import sys
