@@ -187,7 +187,7 @@ if __name__ == '__main__':
         if batch_id % Flags.save_every == 0:
             torch.save(net.state_dict(), Flags.model_path + '/model-inter-' + str(batch_id + 1) + ".pt")
 
-        if batch_id % Flags.test_every == 0:  # Shouldn´t be set the net in eval mode?
+        if batch_id % Flags.test_every == 0:
             net.eval()
             right, error = 0, 0
             for val_id, (test1, test2) in enumerate(val_loader, 1):
@@ -202,9 +202,6 @@ if __name__ == '__main__':
                     right += 1
                 else:
                     error += 1
-                    # if Flags.save_errors:
-                    # test1.save('dataset/errors/' + str(batch_id) + '_' + str(val_id))
-                         
 
             acc = right * 1.0 / (right + error)
             print('*' * 70)
@@ -216,7 +213,6 @@ if __name__ == '__main__':
 
     #  learning_rate = learning_rate * 0.95
 
-
     # Save loss time series
     with open('train_loss', 'wb') as f:
         pickle.dump(train_loss, f)
@@ -226,4 +222,8 @@ if __name__ == '__main__':
     for d in accuracy:
         acc += d
     print("#" * 70)
-    print("final accuracy: ", acc / 20)  # TODO: Averaging of all validation set?? Shouldn´t be the last one?
+    print("mean accuracy: ", acc / len(accuracy))
+    print("max accuracy: ", max(accuracy))
+    print("#" * 70)
+    
+    
