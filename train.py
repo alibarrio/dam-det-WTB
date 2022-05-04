@@ -62,13 +62,16 @@ if __name__ == '__main__':
     # Dataset splitting
     percentage = 0.8  # Percentage of samples used for training
     train_path, test_path = splitDataSet(Flags.data_path, percentage)
-    # Transformations
+    
+    # # # # # # # # # # # # # # # # # # # # # # # # Transformations # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    # Train
     train_transforms = transforms.Compose([
         transforms.Resize(resize_image),
         np.float32,
         transforms.ToTensor(),
         fixed_image_standardization
     ])
+    # Data augmentation
     horz_transforms = transforms.Compose([
         transforms.Resize(resize_image),
         transforms.RandomHorizontalFlip(p=1),
@@ -91,20 +94,40 @@ if __name__ == '__main__':
         transforms.ToTensor(),
         fixed_image_standardization
      ])
-    
+    rot1_transforms = transforms.Compose([
+        transforms.Resize(resize_image),
+        transforms.RandomRotation(degrees=(0, 180)),
+        np.float32,
+        transforms.ToTensor(),
+        fixed_image_standardization
+    ])
+    rot2_transforms = transforms.Compose([
+        transforms.Resize(resize_image),
+        transforms.RandomRotation(degrees=(180, 360)),
+        np.float32,
+        transforms.ToTensor(),
+        fixed_image_standardization
+    ])     
+    # Test
     test_transforms = transforms.Compose([
         transforms.Resize(resize_image),
         np.float32,
         transforms.ToTensor(),
         fixed_image_standardization
     ])
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    
     # Dataset
     train_dataset = createTrain(train_path, transform=train_transforms)
     horz_dataset = createTrain(train_path, transform=horz_transforms)
     vert_dataset = createTrain(train_path, transform=vert_transforms)
     horz_vert_dataset = createTrain(train_path, transform=horz_vert_transforms)
-    augmented_train_dataset = torch.utils.data.ConcatDataset([train_dataset,horz_dataset,vert_dataset])
+    rot1_dataset = createTrain(train_path, transform=rot1_transforms)
+    rot2_dataset = createTrain(train_path, transform=rot2_transforms)
+    
+    augmented_train_dataset = torch.utils.data.ConcatDataset([train_dataset,horz_dataset,vert_dataset,rot1_dataset,rot2_dataset])
     val_dataset = createTest(test_path, transform=test_transforms, times=Flags.times, way=Flags.way)
+    
     # Dataloader
     train_loader = DataLoader(augmented_train_dataset, batch_size=Flags.batch_size, shuffle=False, num_workers=Flags.workers)
     val_loader = DataLoader(val_dataset, batch_size=Flags.way, shuffle=False, num_workers=Flags.workers)
@@ -117,6 +140,7 @@ if __name__ == '__main__':
     classify=False,
     pretrained='vggface2',
     )
+    
     if Flags.load_model:
         net.load_state_dict(torch.load(Flags.load_model_path))
     if use_gpu:
