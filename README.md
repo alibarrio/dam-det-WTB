@@ -1,11 +1,10 @@
 # Development of a Damage Detection System for Wind Turbine Blades using a Siamese Neural Network
 
-### Fine Tuning Siamese.ipynb
-Código principal para entrenar la red
-
-### /functions
+- *finetuning_siameseNN.ipynb*: run to train the network with the dataset
 - *train.py*: training script
-- *siamese_resnet.py*: definición red siamesa
-- *~~pair_dataset.py~*: creación dataset de pares (clase dataset modificada)
-- *~~net_train.py~~*: generación de batches
+- *config_train_pretrain.cfg* and *config_train_scratch.cfg*: pass training args to train.py
+
+/functions
+- *create_dataset.py*: create pair dataset for feed the siamese net
+- *siamese_resnet.py*: siamese neural network definition
 
