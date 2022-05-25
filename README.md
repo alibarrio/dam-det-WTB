@@ -16,6 +16,7 @@ Clases distribution
 
 Preprocessing
 The images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized.
+
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/d45_res.jpg)
 
 ## Training
