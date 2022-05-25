@@ -1,12 +1,17 @@
 # Damage Detection System for Wind Turbine Blades using a Siamese Neural Network
 
-An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf) in pytorch with training and testing on the blade damage dataset. Adapted from: ([repository](https://github.com/fangpin/siamese-pytorch)).
+An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf) in pytorch with training and testing on the blade damage dataset. Adapted from: [repository](https://github.com/fangpin/siamese-pytorch).
 
-- *finetuning_siameseNN.ipynb*: run to train the network with the dataset
-- *train.py*: training script
-- *config_train_pretrain.cfg* and *config_train_scratch.cfg*: pass training args to train.py
+## Dataset
+### Classes
+| Syntax | Description |
+| ----------- | ----------- |
+| Header | Title |
+| Paragraph | Text |
 
-/functions
-- *create_dataset.py*: create pair dataset for feed the siamese net
-- *siamese_resnet.py*: siamese neural network definition
+## Training
+
+## Inferences
+
+## Results
 
