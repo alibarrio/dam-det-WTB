@@ -17,7 +17,7 @@ An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/paper
 The 90\% of the dataset is used for training purposes and the rest for testing the model. Out of that 90\% of the training set, an 80\% is for the training phase and a 20\% for the validation phase.
 
 ### Preprocessing
-([Notebook](https://github.com/alibarrio/dam-det-WTB/blob/main/resize_bboxes.ipynb)
+([Notebook](https://github.com/alibarrio/dam-det-WTB/blob/main/resize_bboxes.ipynb))
 The images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized.
 
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/d45_res.jpg)
