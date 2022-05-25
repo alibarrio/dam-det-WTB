@@ -19,6 +19,11 @@ The images of the damaged regions have different shapes and aspect ratios, so th
 
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/d45_res.jpg)
 
+## Architecture
+It is composed of two main modules: first, a training module, where the network is trained to predict the similarity between the two input images (i.e. a classifier decides whether the two input images belong to the same class or not). And a second module that uses the feature vectors extracted by the previous trained network to classify the query images into the different classes by estimating their highest similarity to the support set (a set of representatives of every class drawn for the training set).
+
+![alt text](https://github.com/alibarrio/dam-det-WTB/blob/main/images/diagrama_comp2.jpg)
+
 ## Training
 
 ## Inferences
