@@ -5,8 +5,6 @@ An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/paper
 ## Dataset
 Clases distribution
 
-![alt text](https://github.com/alibarrio/dam-det-WTB/blob/main/images/dam_type_distr_simp.png)
-
 | Damage type | Code |
 | ----------- | ----------- |
 | Leading Edge Erosion | D-2 |
@@ -14,6 +12,10 @@ Clases distribution
 | Crack - Transverse and Longitudinal | D-4/5 |
 | No Damage | D-0 |
 
+![alt text](https://github.com/alibarrio/dam-det-WTB/blob/main/images/dam_type_distr_simp.png)
+
+Preprocessing
+The images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized.
 
 ## Training
 
