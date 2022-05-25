@@ -14,6 +14,8 @@ An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/paper
 
 ![alt text](https://github.com/alibarrio/dam-det-WTB/blob/main/images/dam_type_distr_simp.png)
 
+The 90\% of the dataset is used for training purposes and the rest for testing the model. Out of that 90\% of the training set, an 80\% is for the training phase and a 20\% for the validation phase.
+
 ### Preprocessing
 The images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized.
 
@@ -40,6 +42,14 @@ To make predictions, only one of the trained twin networks is used to extract th
 
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/prop_conf_mat.png)
 
+| Class | Support | Accuracy | Precision | Recall | F1-score |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| D-2 | 6 |  | 1.00 | 0.83 | 0.91 | 
+| D-3 | 23 |  | 1.00 | 0.91 | 0.91 | 
+| D-4/5 | 26 |  | 0.90 | 1.00 | 0.95 | 
+| D-0 | 12 |  | 0.92 | 0.92 | 0.92 | 
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| Total | 67 | 0.94 | 0.95 | 0.92 | 0.93 | 
 
 
 
