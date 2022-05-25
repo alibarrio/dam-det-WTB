@@ -17,7 +17,7 @@ An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/paper
 The 90\% of the dataset is used for training purposes and the rest for testing the model. Out of that 90\% of the training set, an 80\% is for the training phase and a 20\% for the validation phase.
 
 ### Preprocessing
-([Notebook](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf))
+([Notebook](https://github.com/alibarrio/dam-det-WTB/blob/main/resize_bboxes.ipynb)
 The images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized.
 
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/d45_res.jpg)
@@ -50,6 +50,7 @@ To make predictions, only one of the trained twin networks is used to extract th
 
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/prop_conf_mat.png)
 
+### Metrics
 | Class | Support | Accuracy | Precision | Recall | F1-score |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
 | D-2 | 6 |  | 1.00 | 0.83 | 0.91 | 
@@ -58,7 +59,9 @@ To make predictions, only one of the trained twin networks is used to extract th
 | D-0 | 12 |  | 0.92 | 0.92 | 0.92 | 
 | **Total** | **67** | **0.94** | **0.95** | **0.92** | **0.93** | 
 
+### Embeddings [t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)
 
+![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/prop_emb.png)
 
 
 
