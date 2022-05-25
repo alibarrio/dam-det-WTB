@@ -4,7 +4,7 @@ An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/paper
 
 ## Dataset
 Clases distribution
-
+![alt text](https://github.com/alibarrio/dam-det-WTB/blob/main/images/dam_type_distr_simp.png)
 
 ## Training
 
