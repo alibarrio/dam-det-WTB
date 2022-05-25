@@ -17,6 +17,7 @@ An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/paper
 The 90\% of the dataset is used for training purposes and the rest for testing the model. Out of that 90\% of the training set, an 80\% is for the training phase and a 20\% for the validation phase.
 
 ### Preprocessing
+([Notebook](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf))
 The images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized.
 
 ![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/d45_res.jpg)
@@ -41,6 +42,7 @@ For the training part, the Siamese Neural Network consist of two twin networks, 
 The validation is performed every epoch, for a total of 100 epochs. The validation experiments are performed according the N-way K-shot framework, which consist of drawing a set of random pairs from each of the N different classes where only one of them contains two instances of the same class, and the rest contains instances of different classes. The experiment is successful when the same class pair is the one with the higher similarity, and failed when one of the other pairs obtains the higher one. The number of pairs in each experiment is K that along with the number of experiments in each validation phase are parameters of the model. In this case 400 experiments with K = 20 pairs in each are tested every epoch. Notice that this type of validation is much more exigent than the traditional validation of a normal classification, whose equivalent would be two-pair experiments.
 
 ## Inferences
+[Notebook]([https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf](https://github.com/alibarrio/dam-det-WTB/blob/main/inference.ipynb))
 To make predictions, only one of the trained twin networks is used to extract the embedding from the query image. Then, the distance of this feature vector to the other feature vectors belonging to the support set is calculated, deciding whether it belongs to one class or another depending on to which of them have the smaller distance to the query one. This support set of embeddings have been also extracted by the trained network. In this way, the network trained to predict the similarity between two images is used as an N-class classifier (where N is the number of classes present in the support set).
 
 ## Results
