@@ -3,7 +3,7 @@
 An implementation of the [original paper](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf) in pytorch with training and testing on the blade damage dataset. Adapted from: [repository](https://github.com/fangpin/siamese-pytorch).
 
 ## Dataset
-Clases distribution
+### Clases distribution
 
 | Damage type | Code |
 | ----------- | ----------- |
@@ -36,4 +36,16 @@ The validation is performed every epoch, for a total of 100 epochs. The validati
 To make predictions, only one of the trained twin networks is used to extract the embedding from the query image. Then, the distance of this feature vector to the other feature vectors belonging to the support set is calculated, deciding whether it belongs to one class or another depending on to which of them have the smaller distance to the query one. This support set of embeddings have been also extracted by the trained network. In this way, the network trained to predict the similarity between two images is used as an N-class classifier (where N is the number of classes present in the support set).
 
 ## Results
+###Confusion matrix
+
+![Example](https://github.com/alibarrio/dam-det-WTB/blob/main/images/prop_conf_mat.png)
+
+
+
+
+
+
+
+
+
 
