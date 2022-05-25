@@ -7,6 +7,14 @@ Clases distribution
 
 ![alt text](https://github.com/alibarrio/dam-det-WTB/blob/main/images/dam_type_distr_simp.png)
 
+| Damage type | Code |
+| ----------- | ----------- |
+| Leading Edge Erosion | D-2 |
+| Lightning Strike Damage | D-3 |
+| Crack - Transverse and Longitudinal | D-4/5 |
+| No Damage | D-0 |
+
+
 ## Training
 
 ## Inferences
