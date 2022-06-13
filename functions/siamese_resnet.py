@@ -260,10 +260,10 @@ class Siamese(nn.Module):
 
         # Clasificación (misma clase o distinta clase)
         # self.liner = nn.Linear(out_features, 4096)
-        self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.Sigmoid())
+        self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.ReLU(inplace=False))
         self.out = nn.Linear(4096, 1)
         # self.out = nn.Linear(4096, 1)
-        self.sigm = nn.Sigmoid()
+        # self.sigm = nn.Sigmoid()
 
     def backbone(self, x):
         """Calculate embeddings or logits given a batch of input image tensors.
