@@ -178,7 +178,7 @@ class Mixed_7a(nn.Module):
 
 class Siamese(nn.Module):
 
-    def __init__(self, pretrained=None, classify=False, num_classes=None, num_out_comp=None, dropout_prob=0.6):
+    def __init__(self, pretrained=None, classify=False, embs=False, num_classes=None, num_out_comp=None, dropout_prob=0.6):
         super(Siamese, self).__init__()
         
         # Set simple attributes
@@ -186,6 +186,7 @@ class Siamese(nn.Module):
         self.classify = classify
         self.num_classes = num_classes
         self.num_out_comp = num_out_comp
+        self.embs = embs
 
         if pretrained == 'vggface2':
             tmp_classes = 8631
@@ -241,6 +242,8 @@ class Siamese(nn.Module):
             self.logits = nn.Linear(512, tmp_classes)
             load_weights(self, pretrained)
             out_features = tmp_classes
+            # Mientras se soluciona el bug de la salida
+            # out_features = 512
 
         # Si no le doy pesos preentrenados y quiero sacar los embeddings le especifico cuántos componentes de salida van a tener
         if pretrained is None and self.num_out_comp is not None:
@@ -256,16 +259,16 @@ class Siamese(nn.Module):
         #     self.to(device)
 
         # Clasificación (misma clase o distinta clase)
-        # self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.Sigmoid())
-        self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.ReLU(inplace=False))
+        # self.liner = nn.Linear(out_features, 4096)
+        self.liner = nn.Sequential(nn.Linear(out_features, 4096), nn.Sigmoid())
         self.out = nn.Linear(4096, 1)
+        # self.out = nn.Linear(4096, 1)
+        self.sigm = nn.Sigmoid()
 
     def backbone(self, x):
         """Calculate embeddings or logits given a batch of input image tensors.
-
         Arguments:
             x {torch.tensor} -- Batch of image tensors representing faces.
-
         Returns:
             torch.tensor -- Batch of embedding vectors or multinomial logits.
         """
@@ -296,25 +299,34 @@ class Siamese(nn.Module):
         return x
 
     def forward_one(self, x):
-        x = self.backbone(x)
-        x = x.view(x.size()[0], -1)  # Reshape tensor: https://pytorch.org/docs/stable/generated/torch.Tensor.view.html
-        x = self.liner(x)
+        if not self.embs:
+            x = self.backbone(x)
+            x = x.view(x.size()[0], -1)  # Reshape tensor: https://pytorch.org/docs/stable/generated/torch.Tensor.view.html
+            x = self.liner(x)
+        else:
+            x = self.backbone(x)
+            # x = x.view(x.size()[0], -1)
         return x
 
     def forward(self, x1, x2):
-        out1 = self.forward_one(x1)
-        out2 = self.forward_one(x2)
-        dis = torch.abs(out1 - out2)
-        out = self.out(dis)
-        return out
+        if not self.embs:
+            out1 = self.forward_one(x1)
+            out2 = self.forward_one(x2)
+            dis = torch.abs(out1 - out2)
+            out = self.out(dis)
+            # out2 = self.sigm(out)
+            # return out2
+            return out
+        else:
+            out1 = self.forward_one(x1)
+            out2 = self.forward_one(x2)
+            return out1, out2
 
 def load_weights(mdl, name):
     """Download pretrained state_dict and load into model.
-
     Arguments:
         mdl {torch.nn.Module} -- Pytorch model.
         name {str} -- Name of dataset that was used to generate pretrained state_dict.
-
     Raises:
         ValueError: If 'pretrained' not equal to 'vggface2' or 'casia-webface'.
     """
@@ -331,7 +343,7 @@ def load_weights(mdl, name):
     # cached_file = os.path.join(model_dir, os.path.basename(path))
     # if not os.path.exists(cached_file):
        # download_url_to_file(path, cached_file)
-    cached_file = '/content/gdrive/MyDrive/tfm/models/20180402-114759-vggface2.pt'
+    cached_file = 'C:/Users/U339700/Documents/Palas/models/20180402-114759-vggface2.pt'
     state_dict = torch.load(cached_file)
     mdl.load_state_dict(state_dict)
 
@@ -343,4 +355,3 @@ def get_torch_home():
         )
     )
     return torch_home
-
